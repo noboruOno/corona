@@ -18,7 +18,7 @@ sub getAlpha() {
 	# days of policy switch
 	my @ds = (31, 49, 67, 74);
 	# alpha for each policy span
-	my @alphas = (0.25, 0.095, 0.155, 0.08, 0.06);
+	my @alphas = (0.25, 0.092, 0.155, 0.082, 0.058);
 	
 	my $index;
 	if ($day < $ds[0]) {
