@@ -9,16 +9,16 @@ my %data;
 &readData();
 
 # population
-my $N = 10000000;
+my $N = 100000000;
 
 # policy index map
 sub getAlpha() {
 	my $day = shift;
 	
 	# days of policy switch
-	my @ds = (31, 49, 67, 74);
+	my @ds = (31, 49, 67, 74, 81);
 	# alpha for each policy span
-	my @alphas = (0.25, 0.092, 0.155, 0.082, 0.058);
+	my @alphas = (0.25, 0.092, 0.155, 0.082, 0.056, 0.045);
 	
 	my $index;
 	if ($day < $ds[0]) {
@@ -29,8 +29,10 @@ sub getAlpha() {
 		$index = 2;
 	} elsif ($day < $ds[3]) {
 		$index = 3;
-	} else {
+	} elsif ($day < $ds[4]) {
 		$index = 4;
+	} else {
+		$index = 5;
 	}
 	return $alphas[$index];
 }
@@ -112,10 +114,12 @@ while ($i < 200) {
 sub readData() {
 	while (<DATA>) {
 		my @a = split " ";
-		if (defined $a[1]) {
-			$data{$a[1]} = $a[0];
-		} else {
-			$data{$a[0]} = "";
+		if (defined $a[0]) {
+			if (defined $a[1]) {
+				$data{$a[1]} = $a[0];
+			} else {
+				$data{$a[0]} = "";
+			}
 		}
 	}
 }
@@ -205,4 +209,9 @@ __DATA__
 420	22/04/2020
 434	23/04/2020
 423	24/04/2020
-326 25/04/2020
+346 25/04/2020
+199 26/04/2020
+183 27/04/2020
+272 28/04/2020
+214 29/04/2020
+179 30/04/2020
