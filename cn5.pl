@@ -9,14 +9,6 @@ if ($#ARGV != 1) {
 	exit 1;
 }
 
-# mhl data
-my %data;
-my @serDate;
-
-&readData($ARGV[0]);
-
-my $alpharef = &readAlpha($ARGV[1]);
-
 # population
 # Japan
 my $N = 100000000;
@@ -36,6 +28,17 @@ my $c_infected = $infected; # cummulative number of infected persons on this day
 my $rdetection = 0.025; # ratio of illness (and then isolated) to all infected.
 
 my $detected = 0; # daily number of those newly diagnosed positive.
+
+
+# mhl data
+my %data;
+my @serDate;
+
+&readData($ARGV[0]);
+
+my $alpharef = &readAlpha($ARGV[1]);
+
+#
 my $c_detected = 0; # cummulative number of detected positive.
 
 my $isolated = 0; # number of isolated persons on the day.
@@ -107,7 +110,7 @@ while ($i < 200) {
 	}
 	
 	printf "%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f\n",
-	 $alpha, $i, $datestr, $mhl, $infected, $detected, $c_detected, $isolated,$infection,$c_infected, $r,$r0;
+	 $alpha, $i, $datestr, $mhl, $infected, $detected, $c_detected, $isolated, $infection, $c_infected, $r,$r0;
 
 	$i++;
 }
@@ -148,14 +151,28 @@ sub readData() {
 		if (/^#/) {
 			next;
 		}
-		chomp;
-		my @a = split ",";
-		$data{$a[0]} = $a[1];
-		$serDate[$i] = $a[0];
-		
-		if (!defined $epochOffset) {
-			my @b = split "/", $a[0]; 
-			$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
+		if (/population=(\d+) /) {
+			$N = $1;
+		} elsif (/incubation_period=(\d+) /) {
+			$m = $1;
+		} elsif (/days_to_heel_1=(\d+) /) {
+			$n = $1;
+		} elsif (/days_to_heel_2=(\d+) /) {
+			$o = $1;
+		} elsif (/rate_of_detection=([\d\.]+) /) {
+			$rdetection = $1;
+		} elsif (/infected=(\d+) /) {
+			$infected = $1;
+		} else {
+			chomp;
+			my @a = split ",";
+			$data{$a[0]} = $a[1];
+			$serDate[$i] = $a[0];
+			
+			if (!defined $epochOffset) {
+				my @b = split "/", $a[0]; 
+				$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
+			}
 		}
 
 		$i++;
