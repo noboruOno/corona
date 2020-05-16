@@ -110,7 +110,7 @@ while ($i < 200) {
 	}
 	
 	printf "%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f\n",
-	 $alpha, $i, $datestr, $mhl, $infected, $detected, $c_detected, $isolated, $infection, $c_infected, $r,$r0;
+	 $alpha, $i, $datestr, $mhl, $infected, $detected, $c_detected, $isolated, $infection, $c_infected, $r, $r0;
 
 	$i++;
 }
@@ -166,6 +166,12 @@ sub readData() {
 		} else {
 			chomp;
 			my @a = split ",";
+			if (!defined $a[0]) {
+				next;
+			}
+			if (!defined $a[1] || $a[1] eq "") {
+				$a[1] = 0;
+			}
 			$data{$a[0]} = $a[1];
 			$serDate[$i] = $a[0];
 			
