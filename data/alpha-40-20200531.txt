@@ -1,15 +1,15 @@
 # basic parameters
-population=100000000 # 10 millions. Population of Tokyon
+population=100000000 # 100 millions. Population of Japan
 incubation_period=10 # days from infection to detection
 days_to_heel_1=14    # days to heal without detection and isolation
 days_to_heel_2=28    # days to heal in isolation
 rate_of_detection=0.025 # rate of detected to infected
 infected=50          # initial number of infected
 # date,alpha
-24/01/2020,0.15
+27/01/2020,0.21
 27/02/2020,0.082
-12/03/2020,0.163
-01/04/2020,0.095
-09/04/2020,0.054
-25/04/2020,0.027
-01/05/2020,0.016
+15/03/2020,0.16
+03/04/2020,0.080
+10/04/2020,0.054
+15/04/2020,0.037
+16/05/2020,0.082

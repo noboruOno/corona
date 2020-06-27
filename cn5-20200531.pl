@@ -151,20 +151,34 @@ sub readData() {
 		if (/^#/) {
 			next;
 		}
-		chomp;
-		my @a = split ",";
-		if (!defined $a[0]) {
-			next;
-		}
-		if (!defined $a[1] || $a[1] eq "") {
-			$a[1] = 0;
-		}
-		$data{$a[0]} = $a[1];
-		$serDate[$i] = $a[0];
-		
-		if (!defined $epochOffset) {
-			my @b = split "/", $a[0]; 
-			$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
+		if (/population=(\d+) /) {
+			$N = $1;
+		} elsif (/incubation_period=(\d+) /) {
+			$m = $1;
+		} elsif (/days_to_heel_1=(\d+) /) {
+			$n = $1;
+		} elsif (/days_to_heel_2=(\d+) /) {
+			$o = $1;
+		} elsif (/rate_of_detection=([\d\.]+) /) {
+			$rdetection = $1;
+		} elsif (/infected=(\d+) /) {
+			$infected = $1;
+		} else {
+			chomp;
+			my @a = split ",";
+			if (!defined $a[0]) {
+				next;
+			}
+			if (!defined $a[1] || $a[1] eq "") {
+				$a[1] = 0;
+			}
+			$data{$a[0]} = $a[1];
+			$serDate[$i] = $a[0];
+			
+			if (!defined $epochOffset) {
+				my @b = split "/", $a[0]; 
+				$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
+			}
 		}
 
 		$i++;
@@ -183,31 +197,7 @@ sub readAlpha() {
 		}
 		chomp;
 		my @a = split ",", $_;
-		if ($#a == 1) {
-			$alpha{$a[0]} = $a[1];
-		} else {
-			if ($_ =~ /([\w_]+)=([\d\.]+) /) {
-				if ($1 eq "population") {
-					$N = $2;
-					#print "population=" . $N . "\n";
-				} elsif ($1 eq "incubation_period") {
-					$m = $2;
-					#print "incubation period=" . $m . "\n";
-				} elsif ($1 eq "days_to_heel_1") {
-					$n = $2;
-					#print "days to heal=" . $n . "\n";
-				} elsif ($1 eq "days_to_heel_2") {
-					$o = $2;
-					#print "days of isolation=" . $o . "\n";
-				} elsif ($1 eq "ratio_of_detection") {
-					$rdetection = $2;
-					#print "ratio of detection=" . $rdetection . "\n";
-				} elsif ($1 eq "infected") {
-					$infected = $2;
-					#print "initial infected=" . $infected . "\n";
-				}
-			}
-		}		
+		$alpha{$a[0]} = $a[1];		
 	}
 	
 	return \%alpha;
