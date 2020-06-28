@@ -3,14 +3,11 @@ population=100000000 # 100 millions. Population of Japan
 incubation_period=10 # days from infection to detection
 days_to_heel_1=14    # days to heal without detection and isolation
 days_to_heel_2=28    # days to heal in isolation
-ratio_of_detection=0.025 # ratio of detected to infected
-infected=50          # initial number of infected
+# r is taken from r file.
+#ratio_of_detection=0.025 # ratio of detected to infected
+infected=24000       # initial number of infected
 # date,alpha
-27/01/2020,0.21
-27/02/2020,0.082
-15/03/2020,0.16
-03/04/2020,0.080
-10/04/2020,0.054
-15/04/2020,0.037
-17/05/2020,0.072
-01/06/2020,0.095
+05/05/2020,0.034
+18/05/2020,0.055
+02/06/2020,0.064
+14/06/2020,0.085
