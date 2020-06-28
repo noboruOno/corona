@@ -47,6 +47,7 @@ my $isolated = 0; # number of isolated persons on the day.
 
 # table used to handle time delay
 my @infection; # day-infection table;
+my @isolationlog;
 
 my $alpha;
 my $rdetection; # ratio of test positive to infected
@@ -71,6 +72,7 @@ while ($i < 500) {
 	# today's new infection
 	my $infected_0 = $infected;
 	my $x = $infected * $alpha * $r; # today's ne infection
+	#print " ", $x, ",";
 	$infected += $x;
 	$c_infected += $x;
 	$infection[$i] = $x; # store it for delay handling
@@ -82,28 +84,32 @@ while ($i < 500) {
 	my $detected = 0;
 	my $j = $i - $m;
 	if ($j >= 0) {
-		my $k = $infection[$j];
-		$detected = $rdetection * $k;
+		$detected = $rdetection * $infection[$j];
+		#print $detected, ",";
+		$infection[$j] -= $detected;
 		$c_detected += $detected;
-		$infected -= $detected;
 		$isolated += $detected;
-		$infection[$i - $m] -= $detected;
+		$isolationlog[$i] = $detected;
 		$red += $detected;
+	} else {
+		#print "0,";
 	}
 	
 	# this many infected and not isolated are healed, $n days after infection.
 	$j = $i - $n;
+	my $k = 0;
 	if ($j >= 0) {
-		my $k = $infection[$j];
-		$infected -= $k;
+		$k = $infection[$j];
 		$red += $k;
-	} else {
-		$infected -= $infected / $n;
 	}
+	#print $k, "\n";
+	
+	$infected -= $red;
 		
 	# exit from isolation
-	if (defined $infection[$i - $o]) {
-		$isolated -= $rdetection * $infection[$i - $o];;
+	my $p = $i - $o;
+	if ($p > 0 && defined $isolationlog[$p]) {
+		$isolated -= $isolationlog[$p];
 	}
 	
 	my $datestr = &serNo2Date($i);
@@ -112,15 +118,15 @@ while ($i < 500) {
 		$mhl = "";
 	}
 	
-	my $r0 = 0;
-	if ($red > 0) {
-		$r0 = $alpha * $r / ($red / $infected_0);
-	}
+	#my $r0 = 0;
+	#if ($red > 0) {
+	#	$r0 = $alpha * $r / ($red / $infected_0);
+	#}
 	
 	my $datestr_excel = &reversedatestr($datestr);
 	
 	printf "%5.3f,%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f\n",
-	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $infected, $detected, $c_detected, $isolated, $infection[$i], $c_infected, $r, $r0;
+	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $infected, $detected, $c_detected, $isolated, $infection[$i], $c_infected, $r, $red;
 
 	$i++;
 }

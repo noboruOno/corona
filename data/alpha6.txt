@@ -7,6 +7,4 @@ days_to_heel_2=28    # days to heal in isolation
 #ratio_of_detection=0.025 # ratio of detected to infected
 infected=24000       # initial number of infected
 # date,alpha
-05/05/2020,0.034
-#18/05/2020,0.053
-01/06/2020,0.060
+01/05/2020,0.01
