@@ -5,6 +5,14 @@ days_to_heel_1=14    # days to heal without detection and isolation
 days_to_heel_2=28    # days to heal in isolation
 # r is taken from r file.
 #ratio_of_detection=0.025 # ratio of detected to infected
-infected=24000       # initial number of infected
+infected=10000      # initial number of infected
 # date,alpha
-01/05/2020,0.01
+15/03/2020,0.08
+16/04/2020,0.044
+16/04/2020,0.042
+13/05/2020,0.082
+02/06/2020,0.14
+05/06/2020,0.09
+15/06/2020,0.14
+22/06/2020,0.16
+

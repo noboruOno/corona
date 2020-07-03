@@ -21,46 +21,57 @@ my $m; # days to detection from infection.
 my $n; # days to heal from infection without sickness.
 my $o; # days to heal from detection.
 
-my $infected; # daily number of hidden infected in the town. let initial value be 5.
+my $infected; # daily number of infected in the town.
 
 my $detected; # daily number of those newly diagnosed positive.
+my $c_detected = 0; # cummulative number of detected positive.
 
-# mhl data for $detected
+# mhl data for daily  $detected
 my %data;
 
 # day number - date string table
 my @serDate;
 
+# fill %data
+# $initial value of $infected is assigned there.
 &readData($ARGV[0]);
 
 # read assumed infection probability table.
 my $alpharef = &readAlpha($ARGV[1]);
 
-my $c_infected = $infected; # cummulative number of infected persons on this day.
+# cummulative number of infected persons.
+my $c_infected = $infected;
+# for initial value compensation 
+my $infected0 = $infected;
 
 # read assumed ratio of detection.
 my $rref = &readr($ARGV[2]);
 
 #
-my $c_detected = 0; # cummulative number of detected positive.
 my $isolated = 0; # number of isolated persons on the day.
 
 # table used to handle time delay
-my @infection; # day-infection table;
+my @infectionlog; # day-infection table;
 my @isolationlog;
 
 my $alpha;
 my $rdetection; # ratio of test positive to infected
 
+# parameters and start up values
+print "m = ", $m, "\n";
+print "n = ", $n, "\n";
+print "o = ", $o, "\n";
+print "infected = ", $infected, "\n";
+
 my $i = 0; # day
-while ($i < 500) {
+while ($i < 200) {
 
-	# figures of the day
+	# figures of today
 
+	# infection probability
 	$alpha = &getAlpha($alpha, $i);
-	#if ($alpha > 0.07) {
-	#	print "!\n";
-	#}
+
+	# detection rate
 	$rdetection = &getR($rdetection, $i);
 		
 	# mass immunity factor
@@ -70,63 +81,64 @@ while ($i < 500) {
 	}
 	
 	# today's new infection
-	my $infected_0 = $infected;
-	my $x = $infected * $alpha * $r; # today's ne infection
-	#print " ", $x, ",";
-	$infected += $x;
-	$c_infected += $x;
-	$infection[$i] = $x; # store it for delay handling
+	my $tni = $infected * $alpha * $r;
+	
+	$c_infected += $tni;
+	# store it for delay handling
+	$infectionlog[$i] = $tni; 
 
 	# today's reduction of infected
 	my $red = 0;
 	
-	# today's new detection
+	# today's detection
 	my $detected = 0;
+	# those infected $m bays before are detected and isolated.
 	my $j = $i - $m;
 	if ($j >= 0) {
-		$detected = $rdetection * $infection[$j];
-		#print $detected, ",";
-		$infection[$j] -= $detected;
+		
+		$detected = $rdetection * $infectionlog[$j];
+		
 		$c_detected += $detected;
 		$isolated += $detected;
 		$isolationlog[$i] = $detected;
 		$red += $detected;
 	} else {
-		#print "0,";
+		# until $j >= 0, no data to get $detected in this calculation. 
 	}
 	
 	# this many infected and not isolated are healed, $n days after infection.
 	$j = $i - $n;
-	my $k = 0;
 	if ($j >= 0) {
-		$k = $infection[$j];
-		$red += $k;
+		$red += (1 - $rdetection) * $infectionlog[$j];
+	} else {
+		# for $j < 0, use the classical recovery rate.
+		$red += $infected0/$n;
 	}
-	#print $k, "\n";
 	
-	$infected -= $red;
+	# today's change in infected.
+	$infected = $infected + $tni - $red;
+	if ($infected < 0) {
+		print "BUG\n";
+	}
 		
-	# exit from isolation
+	# count exit from isolation to evaluate number of patients
 	my $p = $i - $o;
 	if ($p > 0 && defined $isolationlog[$p]) {
 		$isolated -= $isolationlog[$p];
 	}
 	
+	# observed daily detection is given as dd/mm/yyyy,detection
 	my $datestr = &serNo2Date($i);
 	my $mhl = $data{$datestr};
 	if (!defined $mhl) {
 		$mhl = "";
 	}
 	
-	#my $r0 = 0;
-	#if ($red > 0) {
-	#	$r0 = $alpha * $r / ($red / $infected_0);
-	#}
-	
+	# my excel needs yyyy/mm/dd for date	
 	my $datestr_excel = &reversedatestr($datestr);
 	
-	printf "%5.3f,%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f\n",
-	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $infected, $detected, $c_detected, $isolated, $infection[$i], $c_infected, $r, $red;
+	printf "%5.3f,%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f\n",
+	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $infected, $detected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
 
 	$i++;
 }
