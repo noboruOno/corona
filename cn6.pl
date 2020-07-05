@@ -160,7 +160,7 @@ sub serNo2Date() {
 sub getAlpha() {
 	my $alpha0 = shift;
 	my $ser = shift;
-	my $datestr = $serDate[$ser];
+	my $datestr = &serNo2Date($ser);
 	if (defined $datestr && defined $alpharef->{$datestr}) {
 		return $alpharef->{$datestr}
 	} else {
