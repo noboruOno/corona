@@ -197,7 +197,7 @@ sub readData() {
 			next;
 		}
 		if (!defined $a[1] || $a[1] eq "") {
-			$a[1] = 0;
+			next;
 		}
 		$data{$a[0]} = $a[1];
 		$serDate[$i] = $a[0];
