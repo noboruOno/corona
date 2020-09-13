@@ -31,7 +31,7 @@ N(d+1) = \alpha N(d)
 $$
 
 On each day, it prints the number of infected who is tested positive on the day, 
-$p$  ($=rdN(d-m)$). $\alpha$ of each day is chosen so as to make $p$ be close to 
+$p$  ($=r\alpha N(d-m)$). $\alpha$ of each day is chosen so as to make $p$ be close to 
 observed value. This is done manually inputting $\alpha$ value of intervals in 
 a parameter file, alpha6.txt. To facilitate comparison of $p$ between observation and 
-calculation, Observed daily $p$ values are input to a data file, infections6.txt.
+calculation, observed daily $p$ values are input to a data file, infections6.txt.
