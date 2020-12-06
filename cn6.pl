@@ -64,7 +64,7 @@ print "o = ", $o, "\n";
 print "infected = ", $infected, "\n";
 
 my $i = 0; # day
-while ($i < 250) {
+while ($i < 300) {
 
 	# figures of today
 
