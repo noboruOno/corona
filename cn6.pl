@@ -64,7 +64,7 @@ print "o = ", $o, "\n";
 print "infected = ", $infected, "\n";
 
 my $i = 0; # day
-while ($i < 300) {
+while ($i < 350) {
 
 	# figures of today
 
@@ -138,7 +138,7 @@ while ($i < 300) {
 	my $datestr_excel = &reversedatestr($datestr);
 	
 	printf "%5.3f,%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f\n",
-	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $infected, $detected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
+	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $detected, $infected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
 
 	$i++;
 }
