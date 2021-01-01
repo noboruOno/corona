@@ -137,8 +137,8 @@ while ($i < 350) {
 	# my excel needs yyyy/mm/dd for date	
 	my $datestr_excel = &reversedatestr($datestr);
 	
-	printf "%5.3f,%5.3f,%d,%s,%s,%d,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f\n",
-	 $alpha, $rdetection, $i, $datestr_excel, $mhl, $detected, $infected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
+	printf "%5.3f,%d,%s,%s,%d,%5.3f,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f\n",
+	 $rdetection, $i, $datestr_excel, $mhl, $detected, $alpha, $infected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
 
 	$i++;
 }
