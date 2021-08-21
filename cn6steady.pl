@@ -5,7 +5,7 @@ use POSIX qw(strftime);
 use Time::Local;
 
 if ($#ARGV != 2) {
-	print "usage: cn4.pl <DATA FILE> <ALPHA FILE> <RFILE>\n";
+	print "usage: cn6steady.pl <DATA FILE> <ALPHA FILE> <RFILE>\n";
 	exit 1;
 }
 
@@ -25,6 +25,9 @@ my $infected; # daily number of infected in the town.
 
 my $detected; # daily number of those newly diagnosed positive.
 my $c_detected = 0; # cummulative number of detected positive.
+
+my $c_vaccinated = 0;
+my $i_vaccination_started;
 
 # mhl data for daily  $detected
 my %data;
@@ -64,9 +67,14 @@ print "o = ", $o, "\n";
 print "infected = ", $infected, "\n";
 
 my $i = 0; # day
-while ($i < 600) {
+while ($i < 700) {
 
 	# figures of today
+	
+	my $datestr = &serNo2Date($i);
+	
+	# population vaccinated
+	&updateVaccinated($i, $datestr);
 
 	# infection probability
 	$alpha = &getAlpha($alpha, $i);
@@ -75,7 +83,7 @@ while ($i < 600) {
 	$rdetection = &getR($rdetection, $i);
 		
 	# mass immunity factor
-	my $r = ($N - $c_infected) / $N;
+	my $r = ($N - $c_infected - $c_vaccinated * 0.6) / $N;
 	if ($r < 0) {
 		$r = 0;
 	}
@@ -118,7 +126,7 @@ while ($i < 600) {
 	# today's change in infected.
 	$infected = $infected + $tni - $red;
 	if ($infected < 0) {
-		print "BUG\n";
+		$infected = 0;
 	}
 		
 	# count exit from isolation to evaluate number of patients
@@ -128,7 +136,6 @@ while ($i < 600) {
 	}
 	
 	# observed daily detection is given as dd/mm/yyyy,detection
-	my $datestr = &serNo2Date($i);
 	my $mhl = $data{$datestr};
 	if (!defined $mhl) {
 		$mhl = "";
@@ -137,8 +144,8 @@ while ($i < 600) {
 	# my excel needs yyyy/mm/dd for date	
 	my $datestr_excel = &reversedatestr($datestr);
 	
-	printf "%5.3f,%d,%s,%s,%d,%5.3f,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f\n",
-	 $rdetection, $i, $datestr_excel, $mhl, $detected, $alpha, $infected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red;
+	printf "%5.3f,%d,%s,%s,%d,%5.3f,%d,%d,%d,%d,%d,%6.4f,%6.4f,%6.4f,%d\n",
+	 $rdetection, $i, $datestr_excel, $mhl, $detected, $alpha, $infected, $c_detected, $isolated, $infectionlog[$i], $c_infected, $r, $tni, $red, $c_vaccinated;
 
 	$i++;
 }
@@ -287,4 +294,21 @@ sub reversedatestr {
 	my $str = shift;
 	my @a = split "/", $str;
 	return $a[2] . "/" . $a[1] . "/" . $a[0]; 
+}
+
+sub updateVaccinated() {
+	my ($li, $ldatestr) = @_;
+	my @a = split "/", $ldatestr;
+	my $str = $a[2] . $a[1] . $a[0];
+	if ($str lt "20210620") {
+		return 0;
+	}
+	if ($str eq "20210620") {
+		$i_vaccination_started = $i;
+		return 0;
+	}
+	if ($i - $i_vaccination_started > 110) {
+		return $c_vaccinated;
+	}
+	$c_vaccinated = $c_vaccinated + 833333;
 }
