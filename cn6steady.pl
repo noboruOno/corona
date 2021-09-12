@@ -83,7 +83,7 @@ while ($i < 700) {
 	$rdetection = &getR($rdetection, $i);
 		
 	# mass immunity factor
-	my $r = ($N - $c_infected - $c_vaccinated * 0.6) / $N;
+	my $r = ($N - $c_infected - $c_vaccinated * 0.8) / $N;
 	if ($r < 0) {
 		$r = 0;
 	}
@@ -300,15 +300,15 @@ sub updateVaccinated() {
 	my ($li, $ldatestr) = @_;
 	my @a = split "/", $ldatestr;
 	my $str = $a[2] . $a[1] . $a[0];
-	if ($str lt "20210620") {
+	if ($str lt "20210531") {
 		return 0;
 	}
-	if ($str eq "20210620") {
+	if ($str eq "20210531") {
 		$i_vaccination_started = $i;
 		return 0;
 	}
-	if ($i - $i_vaccination_started > 110) {
+	if ($i - $i_vaccination_started > 198) {
 		return $c_vaccinated;
 	}
-	$c_vaccinated = $c_vaccinated + 833333;
+	$c_vaccinated = $c_vaccinated + 400000;
 }
