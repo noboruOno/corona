@@ -69,6 +69,7 @@ $$
 
 ## Script
 
+cn6steady.pl
 
 The script repeats the above calculation. For days 0 to 9, $dD(d) = 0$ is assumed.
 A small initial number of infected, $I_0$, is assumed. For days 0 to 13, $dC(d)$ is assumed to be $I_0/n$. 
@@ -80,3 +81,5 @@ The probability of infection, $\alpha$, is manually assigned to arbitrary time s
 infection6.txt - Reported dairy infections.
 
 alpha6.txt - $\alpha$ values.
+
+r6steady.txt - Other parameters.
