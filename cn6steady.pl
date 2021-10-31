@@ -203,12 +203,21 @@ sub readData() {
 		if (!defined $a[0]) {
 			next;
 		}
-		if (!defined $a[1] || $a[1] eq "") {
-			next;
+		if (!defined $a[1]) {
+			@a = split " ";
+			if (!defined $a[1]) {
+				next;
+			}
+			# 2021/10/4 100
+			my @b = split "/", $a[0];
+			if (length($b[2]) == 1) {
+				$b[2] = "0" . $b[2];
+			}
+			$a[0] = $b[2] . "/" . $b[1] . "/" . $b[0];
 		}
 		$data{$a[0]} = $a[1];
 		$serDate[$i] = $a[0];
-		
+				
 		if (!defined $epochOffset) {
 			my @b = split "/", $a[0]; 
 			$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
