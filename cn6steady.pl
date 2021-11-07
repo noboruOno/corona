@@ -34,10 +34,13 @@ my %data;
 
 # day number - date string table
 my @serDate;
+my %dateStr2Ser;
+my %serVaccinationHash;
 
 # fill %data
 # $initial value of $infected is assigned there.
 &readData($ARGV[0]);
+&readVaccinationDataFile();
 
 my $alpha;
 # read assumed infection probability table.
@@ -74,7 +77,8 @@ while ($i < 700) {
 	my $datestr = &serNo2Date($i);
 	
 	# population vaccinated
-	&updateVaccinated($i, $datestr);
+	#&updateVaccinated($i, $datestr);
+	$c_vaccinated = $N * &findVaccinationRatio($i);
 
 	# infection probability
 	$alpha = &getAlpha($alpha, $i);
@@ -217,6 +221,7 @@ sub readData() {
 		}
 		$data{$a[0]} = $a[1];
 		$serDate[$i] = $a[0];
+		$dateStr2Ser{$a[0]} = $i;
 				
 		if (!defined $epochOffset) {
 			my @b = split "/", $a[0]; 
@@ -302,9 +307,15 @@ sub readr() {
 sub reversedatestr {
 	my $str = shift;
 	my @a = split "/", $str;
+	if (length($a[1]) == 1) {
+		$a[1] = "0" . $a[1]
+	}
+	if (length($a[2]) == 1) {
+		$a[2] = "0" . $a[2];
+	}
 	return $a[2] . "/" . $a[1] . "/" . $a[0]; 
 }
-
+=pod
 sub updateVaccinated() {
 	my ($li, $ldatestr) = @_;
 	my @a = split "/", $ldatestr;
@@ -320,4 +331,50 @@ sub updateVaccinated() {
 		return $c_vaccinated;
 	}
 	$c_vaccinated = $c_vaccinated + 400000;
+}
+=cut
+
+sub readVaccinationDataFile() {
+	open HF, "data/vaccination.txt";
+	while (<HF>) {
+		chop;
+		my @a = split ",";
+		my $x = &reversedatestr($a[0]);
+		my $ser = $dateStr2Ser{$x};
+		if (!defined $ser) {
+			#print "------------------------" . $x . "\n";
+		} else {
+			$serVaccinationHash{$ser} = $a[1];
+		}
+	}
+	close(HF);
+}
+
+sub findVaccinationRatio() {
+	my $i = shift;
+
+	my $serlast;
+	my $vaxlast;
+	foreach my $ser (sort keys %serVaccinationHash) {
+		my $vax = $serVaccinationHash{$ser};
+		if ($ser == $i) {
+			return $vax;
+		}
+		if ($ser < $i) {
+			$serlast = $ser;
+			$vaxlast = $vax;
+		} else {
+			if (defined $serlast) {
+				# $ser > $i;
+				my $dvax = $vax - $vaxlast;
+				my $dser = $ser - $serlast;
+				my $x = $dvax * ($i - $serlast)/$dser + $vaxlast;
+				return $x;
+			}  
+		}	
+	}
+	if (defined $serlast) {
+		return $vaxlast;
+	}
+	return 0;
 }
