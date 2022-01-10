@@ -1,0 +1,8 @@
+# simulation parameters
+population=125000000 # 100 millions. Population of Japan
+incubation_period=7 # days from infection to detection
+days_to_heal_1=14    # days to heal without detection and isolation
+days_to_heal_2=20    # days to heal in isolation
+ratio_of_detection=0.1 # ratio of detected to infected
+infected=6      # initial number of infected
+last_alpha=0.4  # alpha value for the future
