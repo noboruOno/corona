@@ -88,25 +88,25 @@ while ($i < 800) {
 	
 	my $datestr = &serNo2Date($i);
 
-	# observed daily detection is given as dd/mm/yyyy,detection
+	# observed daily detection is given as yyyy/mm/dd\tdetection
 	my $mhl = $data{$datestr};
-	if (!defined $mhl) {
+	if (defined $mhl) {
+		# from detection on day $i, we know infection on day $i-$m
+		$infectionlog[$i-$m] = $mhl / $rdetection;
+	} else {
+		# not $mhl for infection on day $i - $m
+		# predict it with assumed $alphalast
 		$infectionlog[$i-$m] = $C[$i-$m]*$alphalast;
 		$mhl = $infectionlog[$i-$m]*$rdetection;
 		$data{$datestr} = $mhl;
 		if ($ilast == 0) {
 			$ilast = $i;
 		}
-	} else {
-		$infectionlog[$i-$m] = $mhl / $rdetection;
 	}
 	
 	$alpha[$i-$m] = $infectionlog[$i-$m]/$C[$i-$m];
 	
-	$C[$i-$m+1] = $C[$i-$m] + $infectionlog[$i-$m] - $mhl - $infectionlog[$i-$n]*(1-$rdetection);
-	
-	
-	#printf("%s,%d,%5.2f\n", $datestr, $mhl, $alpha[$i-$m]);
+	$C[$i-$m+1] = $C[$i-$m] + $infectionlog[$i-$m] - $infectionlog[$i-$m-$m]*$r - $infectionlog[$i-$m-$n]*(1-$rdetection);
 		
 	$i++;
 }
