@@ -127,7 +127,7 @@ while ($i < $ilast+26) {
 	$i++;
 }
 =cut
-for ($i = 0; $i < $ilast+7; $i++) {
+for ($i = 0; $i < $ilast+30; $i++) {
 	my $datestr = &serNo2Date($i);
 
 	# observed daily detection is given as dd/mm/yyyy,detection
@@ -167,7 +167,7 @@ sub serNo2Date() {
 		return $serDate[$n];
 	}
 	my $epoch = $epochOffset + $n * 86400;
-	my $datestr = strftime("%d/%m/%Y",localtime($epoch));
+	my $datestr = strftime("%Y/%m/%d",localtime($epoch));
     return $datestr;            	                 
 }
 
@@ -211,22 +211,14 @@ sub readData() {
 		if (/^#/) {
 			next;
 		}
+		# 2021/10/4\t100
 		chomp;
-		my @a = split ",";
+		my @a = split "\t";
 		if (!defined $a[0]) {
 			next;
 		}
 		if (!defined $a[1]) {
-			@a = split " ";
-			if (!defined $a[1]) {
-				next;
-			}
-			# 2021/10/4 100
-			my @b = split "/", $a[0];
-			if (length($b[2]) == 1) {
-				$b[2] = "0" . $b[2];
-			}
-			$a[0] = $b[2] . "/" . $b[1] . "/" . $b[0];
+			next;
 		}
 		$data{$a[0]} = $a[1];
 		$serDate[$i] = $a[0];
@@ -234,7 +226,7 @@ sub readData() {
 				
 		if (!defined $epochOffset) {
 			my @b = split "/", $a[0]; 
-			$epochOffset = timelocal(0,0,0,$b[0],$b[1]-1,$b[2]);
+			$epochOffset = timelocal(0,0,0,$b[2],$b[1]-1,$b[0]);
 		}
 
 		$i++;
