@@ -83,50 +83,33 @@ while ($i < $o) {
 
 my $ilast = 0;
 while ($i < 800) {
-	
-	# figures of today
-	
-	my $datestr = &serNo2Date($i);
+	# guess events on day $i - $m;
+	my $im = $i - $m;
 
 	# observed daily detection is given as yyyy/mm/dd\tdetection
+	my $datestr = &serNo2Date($i);
 	my $mhl = $data{$datestr};
 	if (defined $mhl) {
 		# from detection on day $i, we know infection on day $i-$m
-		$infectionlog[$i-$m] = $mhl / $rdetection;
+		$infectionlog[$im] = $mhl / $rdetection;
 	} else {
 		# not $mhl for infection on day $i - $m
 		# predict it with assumed $alphalast
-		$infectionlog[$i-$m] = $C[$i-$m]*$alphalast;
-		$mhl = $infectionlog[$i-$m]*$rdetection;
+		$infectionlog[$im] = $C[$im]*$alphalast;
+		$mhl = $infectionlog[$im]*$rdetection;
 		$data{$datestr} = $mhl;
 		if ($ilast == 0) {
 			$ilast = $i;
 		}
 	}
 	
-	$alpha[$i-$m] = $infectionlog[$i-$m]/$C[$i-$m];
+	$alpha[$im] = $infectionlog[$im]/$C[$im];
 	
-	$C[$i-$m+1] = $C[$i-$m] + $infectionlog[$i-$m] - $infectionlog[$i-$m-$m]*$r - $infectionlog[$i-$m-$n]*(1-$rdetection);
+	$C[$im+1] = $C[$im] + $infectionlog[$im] - $infectionlog[$im-$m]*$r - $infectionlog[$im-$n]*(1-$rdetection);
 		
 	$i++;
 }
-=pod
-while ($i < $ilast+26) {
-	my $datestr = &serNo2Date($i);
-	
-	$alpha[$i-$m] = $alphalast;
-	$infectionlog[$i-$m+1] = $C[$i-$m]*$alphalast;
-	$data{$datestr} = $infectionlog[$i-$m+1]*$rdetection;
-	if (!defined $infectionlog[$i-$m]) {
-		printf '$infectionlog[$i-$m] is undefined. $i=%d, %s\n', $i, $datestr;
-	}
-	if (!defined $infectionlog[$i-$n]) {
-		printf '$infectionlog[$i-$n] is undefined. $i=%d, %s\n', $i, $datestr;
-	}
-	$C[$i-$m+1] = $C[$i-$m] + $infectionlog[$i-$m+1] - $infectionlog[$i-$m]*$rdetection - $infectionlog[$i-$n]*(1-$rdetection);
-	$i++;
-}
-=cut
+
 for ($i = 0; $i < $ilast+30; $i++) {
 	my $datestr = &serNo2Date($i);
 
@@ -171,15 +154,6 @@ sub serNo2Date() {
     return $datestr;            	                 
 }
 
-=pod
-# simulation parameters
-population=125000000 # 100 millions. Population of Japan
-incubation_period=5 # days from infection to detection
-days_to_heel_1=10    # days to heal without detection and isolation
-days_to_heel_2=20    # days to heal in isolation
-ratio_of_detection=0.1 # ratio of detected to infected
-infected=5      # initial number of infected
-=cut
 sub readparams() {
 	my $pfile = shift;
 	open HF, $pfile or die "Can't open parameter file, $pfile\n";
@@ -234,14 +208,3 @@ sub readData() {
 	close HF;
 }
 
-sub reversedatestr {
-	my $str = shift;
-	my @a = split "/", $str;
-	if (length($a[1]) == 1) {
-		$a[1] = "0" . $a[1]
-	}
-	if (length($a[2]) == 1) {
-		$a[2] = "0" . $a[2];
-	}
-	return $a[2] . "/" . $a[1] . "/" . $a[0]; 
-}
