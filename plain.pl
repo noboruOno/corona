@@ -115,6 +115,10 @@ for ($i = 0; $i < $ilast+30; $i++) {
 
 	# observed daily detection is given as dd/mm/yyyy,detection
 	my $mhl = $data{$datestr};
+	if (!defined $mhl) {
+		# end of data file
+		exit 0;
+	}
 	if ($i < $ilast - $m) {
 		if (defined $alpha[$i]) {
 			printf("%s,%d,%5.3f,,,%d %d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
