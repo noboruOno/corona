@@ -82,7 +82,7 @@ while ($i < $o) {
 }
 
 my $ilast = 0;
-while ($i < 950) {
+while ($i < 960) {
 	# guess events on day $i - $m;
 	my $im = $i - $m;
 
