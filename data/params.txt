@@ -5,4 +5,4 @@ days_to_heal_1=14    # days to heal without detection and isolation
 days_to_heal_2=20    # days to heal in isolation
 ratio_of_detection=0.1 # ratio of detected to infected
 infected=6      # initial number of infected
-last_alpha=0.062  # alpha value for the future
+last_alpha=0.053  # alpha value for the future
