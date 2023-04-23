@@ -121,22 +121,22 @@ for ($i = 0; $i < $ilast+30; $i++) {
 	}
 	if ($i < $ilast - $m) {
 		if (defined $alpha[$i]) {
-			printf("%s,%d,%5.3f,,,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
+			printf("%s,%d,%6.4f,,,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
 		} else {
 			printf("%s,%d,,\n", $datestr, $mhl);
 		}
 	} elsif ($i < $ilast) {
 		if (defined $alpha[$i]) {
-			printf("%s,%d,,,%5.3f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
+			printf("%s,%d,,,%6.4f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
 		} else {
 			printf("%s,%d,,\n", $datestr, $mhl);
 		}		
 	} else {
 		if (defined $alpha[$i] && defined $C[$i]) {
 			if (defined $infectionlog[$i]) {
-				printf("%s,,,%d,%5.3f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
+				printf("%s,,,%d,%6.4f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], $infectionlog[$i]);
 			} else {
-				printf("%s,,,%d,%5.3f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], 0);
+				printf("%s,,,%d,%6.4f,%d,%d\n", $datestr, $mhl, $alpha[$i], $C[$i], 0);
 			}
 		} else {
 			printf("%s,,,%d,,,\n", $datestr, $mhl);
